@@ -6,13 +6,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="./app.js"></script>
   <!--script type="text/javascript" src="jquery.min.js"></script-->
-
-  <script>
-
-  </script>
 </head>
 <body>
-
 
 <!-- header info start-->
 <div class="top">
@@ -26,7 +21,6 @@
 </div>
 <!-- header info stop-->
 
-
   <!-- Main area start, rename from Left to main or something-->
 
 <div class="left">
@@ -38,7 +32,7 @@
       </div>
     <!--/div-->
 
-    <button class="leftBtn" onclick="App.showBtn('showAccountInfo'); App.accountInfo();App.updateQR();App.meteringFront();">Account Info</button>
+    <button class="leftBtn" onclick="App.showBtn('showAccountInfo'); App.accountInfo();;">Account Info</button>
 
     <button class="leftBtn" onclick="App.showBtn('addAttributeCont');">Add/Remove Device</button>
 
@@ -69,9 +63,11 @@
       <br/><br/>
       <br/><br/>
 
-    <h2>Devices</h2>
-      <span id="accountDevices">No Devices Claimed<br/> <a href="#" onclick="App.showBtn('addAttributeCont')">Claim Device</a><br/></span><br/>
 
+    <!-- area for frontpage updates when metering is enabled-->
+    <!--h2>Devices</h2>
+      <span id="accountDevices">No Devices Claimed<br/> <a href="#" onclick="App.showBtn('addAttributeCont')">Claim Device</a><br/></span><br/>
+    -->
   </div>
 
   <!-- admin page for all users and devices -->
@@ -176,11 +172,6 @@
     <p id="help">You can only add a device once, after that you will get jump errors, Look at console log for error message. You can remove device if added by error.
     If you get an error, most likely the device has already been added. Try removing the device, note this will wipe the data. </p>
 
-
-    <!--button type="button" onClick="App.firstBlock();">check blocks</button>
-
-    <button type="button" onClick="App.checkBlock();">check specific</button-->
-
 <!-- listing devices start-->
 
     <div class="row">
@@ -216,11 +207,6 @@
 
    </div>
 
-<!-- diaplying ALl devices on the chain need a log of all devices, not just filter from latest... Filter from first. -->
-<br><br><br><br><br><br>
- <!--button type="button" onClick="App.showAllDevices();">Show All Devices</button-->
-<!-- filter display end all devices-->
-
 </div>
 
 
@@ -235,8 +221,6 @@
 
     <span id="pagecontent">.</span>
     <br>
-
-    <!--span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span-->
 
 
 </div>

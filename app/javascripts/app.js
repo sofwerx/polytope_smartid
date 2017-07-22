@@ -188,22 +188,6 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
       self.setStatus("Error; see log.");
     });
 
-// from output works.
-//    console.log("attribute added: " +  attribute)
-    // it adds the attribute. need return value...
-
-    // following updates our visual eth balance top of page...
-
-    // for metamask callback
-
-    /*
-        balanceWei = web3.eth.getBalance(currentAccount, function(error, result){
-          if(!error)
-            result.toNumber()
-          else
-            console.error(error);
-        }); */
-
       balanceWei = web3.eth.getBalance(currentAccount).toNumber();
       balance = web3.fromWei(balanceWei, 'ether'); // balance in eth.
       accounNr.innerHTML = currentAccount;
@@ -211,76 +195,10 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
   },
 
 
-  // BTC address add function. Need to add input field for this....
-  addBitCoinAddress: function(){
-    var btcValue = document.getElementById("inputBTC").value;
-    var self = this;
-    var smart;
-    SmartIdentity.deployed().then(function(instance) {
-      smart = instance;
-//      return smart.setEncryptionPublicKey(newKey, {from: account});
-
-        return smart.setBTC(btcValue, {from: currentAccount})
-//        return smart.addBTC(btcValue, {from: currentAccount})
-
-//      return smart.addBTC2(btcValue, {from: currentAccount})
-    }).then(function(value) {
-//      this.setStatus("Transaction complete");
-        self.setStatus2("Transaction complete, BTC added");
-        //btcStatus.innerHTML = smart.getBTC.call();
-  //      console.log(inputData);
-  //      console.log(smart.addBTC({from: currentAccount}))
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus2("Error; see log.");
-    });
-//    console.log(smart.getBTC());
-  console.log("button works");
-  },
-
   firstBlock: function(){
-    // looing for first block to position
-    //  var test =  web3.eth.getTransaction('0xa0a881de25dddaf26dbe2f2c57d798bfdcb7693a55d4595318540410c3bec19d')
-    //  var test = web3.eth.getTransactionFromBlock('10');
-    //0xa0a881de25dddaf26dbe2f2c57d798bfdcb7693a55d4595318540410c3bec19d
-    //  console.log(test);
-
     var func = App.findFunctionByHash(functionHashes, test.input);
     var inputData = SolidityCoder.decodeParams(["bytes32"], t.input.substring(10)); // issue is probably here... because its substring...
     console.log(web3.toAscii(inputData[0].toString()));
-  },
-
-  checkBlock: function(){
-    // looing for first block to position
-    // no good.. But we need to scan all blocks here...
-    /*var oneBlock = web3.eth.getBlock('earliest');
-    console.log('block # ' + oneBlock.blockNumber);
-    var index = 0;
-
-
-    var t = oneBlock.transactions[index];
-
-    var from = t.from;
-    console.log("from " + from)*/
-
-    // This does block transaction.... still need to read the input....
-    // probably have to do our t = block transaction thing here.
-
-    // we should also add a pending... that way we can see transactions in progress..
-
-    // also add a filer.stopWatching()....
-//    probably something like filter('fromblock:0' , "toblock:"latest")
-
-// uncomment below
-//var filter = web3.eth.filter({fromBlock:0, toBlock: 'latest'});
-//filter.get(function(error, result){ console.log(error, result); });
-
-// we need to get input data from transaction from block...
-//var str = web3.eth.getTransactionFromBlock('10');
-//var test = web3.toAscii(str)
-
-//  console.log(str.input)
-
   },
 
   remAttribute: function(){
@@ -313,60 +231,21 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
     console.log("final block to check: ")
   },
 
-
-  getBTC: function(){
-        console.log(smartID.getBTC.call());
-  },
-
-
-// btc filter
-  watchFilterBTC: function(){
-    var filter = web3.eth.filter('latest');
-
-      filter.watch(function(error, result){
-          var block = web3.eth.getBlock(result, true);
-          console.log('block #' + block.number);
-          console.dir(block.transactions);
-
-          for (var index = 0; index < block.transactions.length; index++) {
-            var t = block.transactions[index];
-            var from = t.from;
-            var to = t.to;
-            var func = App.findFunctionByHash(functionHashes, t.input);
-
-            if (func == 'setBTC') {
-              var inputData = SolidityCoder.decodeParams(["string"], t.input.substring(10)); // issue is probably here... because its substring...
-              console.dir(inputData);
-              BTCshow.innerHTML = inputData;
-              console.log(inputData);
-            } else if (func != 'setBTC') {
-              console.dir("Not working, try again")
-            } else {
-              // Default log
-            }
-        }
-      });
-  },
-
+// just a testfilter for learning
   watchFilter3: function(){
-// this outputs some sort of json.
     var filter=web3.eth.filter({fromBlock: 0, toBlock: 'latest'});
     filter.get(function(error, log) {
       console.log(JSON.stringify(log));
     });
   },
 
-  // this filter checks entire chain for addded devices... We need to also check for removed devices... as to not have duplicates... If removed device has larger block
-  // number than added, then it should not display.
-  // it does not display correct from user.. hm.
+  // checks entire chain, alter this from current block to be searched.
   watchFilterFromTo: function(){
     allAccounts.innerHTML = '';
 
     var filter=web3.eth.filter({fromBlock: 0, toBlock: 'latest'});
 //    var filter=web3.eth.filter({fromBlock: 1127125, toBlock: 'latest'});  // ropsten blocks.
     filter.get(function(error, log) {
-    //      console.log(JSON.stringify(log));
-    // looping over data to find all block numbers. Now let us use these block nubmers to read the data.
     var data = log;
       for(var i = 0; i < data.length; i++)
       {
@@ -381,11 +260,6 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
             if (func == 'addAttribute') {
               // This is the sellEnergy() method
               var inputData = SolidityCoder.decodeParams(["bytes32"], t.input.substring(10));
-            //  console.dir(inputData);
-            //  console.log("from " + from + " input data " + inputData[0].substring(0, inputData[0].toString().length - 24)) // set this to currentaccount... we we see who submitted the attribute.. wont work universally though.
-            // removed the jquery to use jscript. $('#allAccounts').append(
-
-              // this hits back to showAccountINfo, we need up update current account to whatever is clicked as well.
               allAccounts.innerHTML +=
               '<tr><td>' + t.blockNumber +
               '</td><td><a href="#" onclick="App.showBtn('+"'showAccountInfo'"+')">' + from + '</a></td><td>' + inputData[0].substring(0, inputData[0].toString().length - 24) + '</td></tr>';
@@ -393,11 +267,7 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
               allAccounts.innerHTML +=
               '<tr><td><span id="red">' + t.blockNumber +
               '</td><td><span id="red">' + from + '</td><td><span id="red">' + inputData[0].substring(0, inputData[0].toString().length - 24) + '</span></td></tr>';
-                  // console.log("Remove Device Function RUN ")
-                  // this is where we check if remove has been run on same device...
             } else if (func != 'addAttribute') {
-                //          console.dir("Function Not Add Attribute")
-                // here we need a duplicate detection.
             } else {
               // Default log
             }
@@ -421,59 +291,26 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
           for (var index = 0; index < block.transactions.length; index++) {
             var t = block.transactions[index];
 
-            // Decode from
-        //    var from = t.from==account ? "me" : t.from;
-            //var from = currentAccount;
             var from = t.from;
-            //  console.log(t.input)
             var to = t.to;
-            // Decode function
             var func = App.findFunctionByHash(functionHashes, t.input);
-            //App.findFunctionByHash(functionHashes, t.input);
-// we need a if func == setKey or == setAttribute... whatever the name is in the contract, then this input data is printed out... so we need a if statement...
-
-/* Remember we are decoding bytes32 i think*/
-// might need to change this to string...
-
-          //  var inputData = SolidityCoder.decodeParams(["uint256"], t.input.substring(10)); // issue is probably here... because its substring...
-
-            // look up solidity coder decodeparams...
-            //console.dir(inputData);
-            //console.log(inputData[0].toString())
-//            var inputData = SolidityCoder.decodeParams(["bytes32"]ct, t.input); // issue is probably here... because its substring...
 
             if (func == 'addAttribute') {
               // This is the sellEnergy() method
-              var inputData = SolidityCoder.decodeParams(["bytes32"], t.input.substring(10)); // issue is probably here... because its substring...
-              // THIS ONE ACTUALLY DECODES THE DAMN STUFFs... // get the from.
+              var inputData = SolidityCoder.decodeParams(["bytes32"], t.input.substring(10));
+    //          console.dir(inputData);
+    //          console.log("from " + from + " input data " + inputData[0].substring(0, inputData[0].toString().length - 24)) // set this to currentaccount... we we see who submitted the attribute.. wont work universally though.
+    //          console.log("to" + to) // this is to the contract. I think.
 
-            //  var inputData = SolidityCoder.decodeParams(["uint256"], t.input.substring(10));
-              console.dir(inputData);
-              console.log("from " + from + " input data " + inputData[0].substring(0, inputData[0].toString().length - 24)) // set this to currentaccount... we we see who submitted the attribute.. wont work universally though.
-              /// needs to be the real from returned in the transaction..
-    //          console.log(web3.toAscii(inputData[0].toString()))
-              // still need to decipher the output i guess..
-              console.log("to" + to) // this is to the contract. I think.
-
-              // block count is wrong not a big deal but it adds even if block isnt updated
               $('#transactions').append('<tr><td>' + t.blockNumber +
               '</td><td>' + from + '</td><td>' + inputData[0].substring(0, inputData[0].toString().length - 24) + '</td></tr>');
-//              '</td><td>' + from + '</td><td>' + t.input.substring(0, t.input.length - 24) + '</td></tr>');
-              // yes we use this but not here. deviceEthereumAddress = inputData[0].substring(0, inputData[0].toString().length - 24);
-              console.log("Device that has been added is : " + deviceEthereumAddress)
-//                  '</td><td>' + from + '</td><td>' + t.input.substring(0, t.input.length - 24) + '</td></tr>'); -- old way. not completely right but its fine.
-//                  '</td><td>Attribute: (' + web3.toAscii(inputData[0].toString()) + ')</td></tr>');
+//              console.log("Device that has been added is : " + deviceEthereumAddress)
             } else if (func != 'addAttribute') {
-            //  var inputData = SolidityCoder.decodeParams(["uint256"], t.input.substring(10));
-    //          console.dir(inputData);
               console.dir("Not working, try again")
             } else if (func == 'removeAttribute') {
-
               console.log("Removing : " + deviceEthereumAddress);
               deviceEthereumAddress = "blank";
               console.log("deviceEthereumAddress is : " + deviceEthereumAddress);
-
-            //  var inputData = SolidityCoder.decodeParams(["uint256"], t.input.substring(10));
             } else {
               // Default log
             }
@@ -504,17 +341,6 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
     return null;
   },
 
-
-// no go yet...
-  endorseAcc: function(){
-      console.log("endorsed!!")
-      var endorseIn = document.getElementById("endorsed");
-      endorseIn.innerHTML = "endorsed"
-// still need to define smartID. set abi and address correctly. open old to check.
-        smartID.addEndorsement('test', 'test',{from:steffen.address});
-//      innerHTML.
-      //pagecontent
-  },
 
   // Set key thenable.
   /// does not work compeltely though hmm says encryptionPublicKey is not defined.
