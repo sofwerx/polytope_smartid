@@ -10,30 +10,21 @@ import smartid_artifacts from '../../build/contracts/SmartIdentity.json'
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var SmartIdentity = contract(smartid_artifacts);
-
 var accounts; // need it global for it to work
 var account; // same
 var currentAccount; // need to set this global in order to switch to other accounts. move this to currentAccount = web3.eth.coibase when needed.
-
 var steffen = {}; // test user
 var divState = {}; // for show and hide toggle
-
 var contractAddress = '0x46a83f04205ba6a1d1c68d8fc2b447d9990f418d'; // current address for testing
-//var contractAddress = '0x23321cc69cc689ad70f57efcd4b1d6ef1aaac9cb'; // test-net contract address
-//var contractAddress = '0x3d97dAC6a412970E714bB0d0AB421C89485ccf99'; // test-net contract address
-
 var owner;
 var smartID;
 var abi;
 var balanceWei; // needs global
 var balance; // needs global
-
 var SolidityCoder = require("web3/lib/solidity/coder.js");
 var func;
 var functionHashes;
-
 var deviceEthereumAddress;
-
 var tokenValue;
 var totalTokens = 0;
 
@@ -63,38 +54,16 @@ window.App = {
       owner = account;
 
       balanceWei = web3.eth.getBalance(currentAccount).toNumber();
+      balance = web3.fromWei(balanceWei, 'ether');
 
-      // added callback for metamask callback
-      /*
-          balanceWei = web3.eth.getBalance(currentAccount, function(error, result){
-            if(!error)
-              result.toNumber()
-            else
-              console.error(error);
-          });
-          */
-
-          // balance to update to display on screen
-          balance = web3.fromWei(balanceWei, 'ether');
-
-    // balance = web3.fromWei(balanceWei, 'ether');
-    // print to screen
       ethBalance.innerHTML = balance + " Ether";
       accounNr.innerHTML = currentAccount; // this should be getaccount [Number ]
 
-  //console.log(SmartIdentity.deployed());
-  //console.log("contract address: " + contractAddress);
   abi = SmartIdentity.abi;
-  // Make sure abiArray is up to date
+  // duplicate?
   var abiArray = [{"constant":false,"inputs":[{"name":"_newowner","type":"address"}],"name":"setOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_attributeHash","type":"bytes32"},{"name":"_endorsementHash","type":"bytes32"}],"name":"removeEndorsement","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_attributeHash","type":"bytes32"},{"name":"_endorsementHash","type":"bytes32"}],"name":"acceptEndorsement","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_myEncryptionPublicKey","type":"string"}],"name":"setEncryptionPublicKey","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"encryptionPublicKey","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"removeOverride","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_override","type":"address"}],"name":"setOverride","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_mySigningPublicKey","type":"string"}],"name":"setSigningPublicKey","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getOwner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_hash","type":"bytes32"}],"name":"addAttribute","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"bytes32"}],"name":"attributes","outputs":[{"name":"hash","type":"bytes32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"signingPublicKey","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_attributeHash","type":"bytes32"},{"name":"_endorsementHash","type":"bytes32"}],"name":"checkEndorsementExists","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_hash","type":"bytes32"}],"name":"removeAttribute","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_attributeHash","type":"bytes32"},{"name":"_endorsementHash","type":"bytes32"}],"name":"addEndorsement","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_oldhash","type":"bytes32"},{"name":"_newhash","type":"bytes32"}],"name":"updateAttribute","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"sender","type":"address"},{"indexed":false,"name":"status","type":"uint256"},{"indexed":false,"name":"notificationMsg","type":"bytes32"}],"name":"ChangeNotification","type":"event"}];
-    //console.log(abiArray)
-    // could possibley do this this way also web3.eth.contract([ABI array goes here to make it an array]);
   functionHashes = App.getFunctionHashes(abiArray);
-  // var functionHashes = getFunctionHashes(SmartIdentity.abi);
   smartID = web3.eth.contract(abi).at(contractAddress);  // redundant?
-  //console.log("abi: " + abi)
-  //	ethBalance.innerHTML = accounts[0];
-
 
   var BigNumber = require('bignumber.js');
 	var i;
@@ -118,46 +87,24 @@ window.App = {
 	    x = new BigNumber(web3.eth.getBalance(accounts[i]));
             functionValue = accounts[i];
             myDropdown.innerHTML += "Account: " + i + "<br/>" + "<a href='#' onclick='App.updateContent("+i+")'>" + accounts[i] + "</a>";
-  //	    console.log(x.plus(21).toString(10));
 	}
   App.accountInfo();
 
   encryptionKey.innerHTML = smartID.encryptionPublicKey({from: steffen.address});
 
   var smartIDadd = '0x9b0820f41b9c29f5e43a6b8ea5b33b31fb62f42e';
-//  var smartIDtest = web3.eth.contract(smartID.abi).at(smartIDadd); // can probably set the address globally
-
-  //smartIDtest.new();
-
-  // gas set depending on dev environment.
-//  SmartIdentity.new({from: steffen.address, gas: 4712388});
-//SmartIdentity.new({from: '0xa7d455fe00228e9bb08238087fe81ff385e71fe4'});
-
-// check following gas level for live deploy
-
-/*
-SmartIdentity.new({from: steffen.address, gas: 4712388})
-  .then(function(data) {
-    steffen.identify = data;
-  })
-*/
 
   App.showBtn('frontPage')
 //      self.refreshBalance();
     });
   },
 
-  // *** functions start *** ///
-
-
-// testing functions
   smartContractNew: function(){
     SmartIdentity.new({from: steffen.address, gas: 4712388})
       .then(function(data) {
         steffen.identify = data;
       })
     console.log("new smartID contract issued: " + steffen.identify)
-//    console.log('Eth? ' + web3.eth.getTransaction("0xa4b4417fc7e492b911d08e948ea50ca772b82516"));
   },
 
   smartNew: function(){
@@ -177,8 +124,6 @@ SmartIdentity.new({from: steffen.address, gas: 4712388})
     var smart;
     SmartIdentity.deployed().then(function(instance) {
       smart = instance;
-//      return smart.setEncryptionPublicKey(newKey, {from: account});
-//      return smart.addAttribute(attribute, {from: currentAccount, gas: 22850})
         return smart.addAttribute(attribute, {from: currentAccount, gas: 244487});
     }).then(function(value) {
 //      this.setStatus("Transaction complete");
