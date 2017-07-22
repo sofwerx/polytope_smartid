@@ -22,10 +22,6 @@ contract SmartIdentity {
     uint constant DEBUG_EVENT = 5;
 
     mapping(bytes32 => Attribute) public attributes;
-    mapping(bytes32 => BTCadd) public btcaddresses;
-
-    string public BTCaddress;
-
 
     /**
      * Constructor of the Smart Identity
@@ -77,10 +73,7 @@ contract SmartIdentity {
         mapping(bytes32 => Endorsement) endorsements;
     }
 
-    struct BTCadd {
-        bytes32 hash;
-        mapping(bytes32 => Endorsement) endorsements;
-    }
+
 
 
     /**
@@ -138,14 +131,6 @@ contract SmartIdentity {
     }
 
 
-    function setBTC(string _newBTCaddr) onlyBy(owner) {
-        BTCaddress = _newBTCaddr;
-        }
-
-    function getBTC() returns(string){
-        return BTCaddress;
-    }
-
     /**
      * The override address is another ethereum address that can reset the owner.
      * In practice this could either be another multi-sig account, or another
@@ -181,21 +166,6 @@ contract SmartIdentity {
         return true;
     }
 
-    function addBTC(bytes32 _hash) onlyBy(owner) checkBlockLock() returns(bool) {
-        var btcadd = btcaddresses[_hash];
-        if (btcadd.hash == _hash) {
-            sendEvent(SIG_CHANGE_EVENT, "A hash exists for the attribute");
-            throw;
-        }
-        btcadd.hash = _hash;
-        sendEvent(INFO_EVENT, "Attribute has been added");
-        return true;
-    }
-
-    function addBTC2(string) onlyBy(owner) checkBlockLock() returns(bool) {
-        var btcadd = BTCaddress;
-        return true;
-    }
 
     /**
      * This updates an attribute by removing the old one first, and then
